@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { FaArrowRight } from "react-icons/fa";
 import { Option } from "@/components/CustomDropdown";
 
@@ -11,6 +11,11 @@ const ImageSection: React.FC<ImageSectionProps> = ({
   selectedOptions,
   optionStyles,
 }) => {
+  useEffect(() => {
+    // Save selectedOptions to local storage
+    localStorage.setItem("selectedOptions", JSON.stringify(selectedOptions));
+  }, [selectedOptions]);
+
   return (
     <div className="w-full h-auto empty-page-left hidden lg:w-[560px] lg:h-[834px] p-6 gap-2 rounded-xl lg:flex items-center justify-center bg-white relative">
       <img

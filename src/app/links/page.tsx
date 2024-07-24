@@ -48,8 +48,6 @@ const LinksPage: React.FC = () => {
           }
         };
         fetchLinks();
-      } else {
-        router.push("/login");
       }
     }
   }, [user, loading, router]);
