@@ -81,7 +81,7 @@ const RegisterPage: React.FC = () => {
             className="w-[135px] h-[26.25px]"
           />
         </div>
-        <div className="w-full bg-white md:border-2 md:rounded-xl md:shadow-md md:p-6 gap-[40px]">
+        <div className="w-full p-4 bg-white md:border-2 md:rounded-xl md:shadow-md md:p-6 gap-[40px]">
           <div className="mb-4 flex flex-col gap-2">
             <h1 className="text-[#333333] text-2xl font-bold leading-8">
               Create account
