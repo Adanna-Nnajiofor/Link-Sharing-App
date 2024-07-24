@@ -1,21 +1,27 @@
 "use client";
 import React, { useState } from "react";
-import { useRouter } from "next/navigation"; // Import useRouter for navigation
+import { useRouter } from "next/navigation";
 import { Option } from "@/components/CustomDropdown";
 import ImageSection from "@/components/ImageSection";
 import LinkList from "@/components/LinkList";
 import PageHeader from "@/components/PageHeader";
 import { FaLink } from "react-icons/fa";
 import { getFirestore, collection, addDoc } from "firebase/firestore";
-import { app } from "@/app/config/firebaseConfig"; // Import your Firebase config
+import { app } from "@/app/config/firebaseConfig";
 
 const AddPage: React.FC = () => {
   const [links, setLinks] = useState<
-    { id: number; selectedOption: Option | null }[]
+    { id: number; selectedOption: Option | null; url: string }[]
   >([]);
-
   const [selectedOptions, setSelectedOptions] = useState<Option[]>([]);
-  const router = useRouter(); // Initialize useRouter
+  const [buttonBorderColor, setButtonBorderColor] = useState<string>("#DDDDDD");
+  const [inputBorderColor, setInputBorderColor] = useState<string>("#DDDDDD");
+  const [inputFocus, setInputFocus] = useState<number | null>(null);
+  const [validationMessage, setValidationMessage] = useState<string | null>(
+    null
+  );
+  const [urlError, setUrlError] = useState<string | null>(null);
+  const router = useRouter();
 
   const handleSelect = (option: Option | null, id: number) => {
     setLinks((prevLinks) =>
@@ -30,9 +36,10 @@ const AddPage: React.FC = () => {
   };
 
   const handleAddNewLink = () => {
+    setButtonBorderColor("#633CFF");
     setLinks((prevLinks) => [
       ...prevLinks,
-      { id: prevLinks.length + 1, selectedOption: null },
+      { id: prevLinks.length + 1, selectedOption: null, url: "" },
     ]);
   };
 
@@ -43,14 +50,54 @@ const AddPage: React.FC = () => {
     );
   };
 
+  const handleInputChange = (id: number, value: string) => {
+    setLinks((prevLinks) =>
+      prevLinks.map((link) => (link.id === id ? { ...link, url: value } : link))
+    );
+  };
+
+  const handleInputFocus = (id: number) => {
+    setInputFocus(id);
+    setInputBorderColor("#633CFF");
+    setValidationMessage(null); // Clear any validation messages on focus
+  };
+
+  const handleInputBlur = () => {
+    setInputFocus(null);
+    setInputBorderColor("#DDDDDD");
+  };
+
   const handleSave = async () => {
+    const emptyLinks = links.some((link) => !link.url);
+    const invalidUrls = links.some((link) => !isValidURL(link.url));
+
+    if (emptyLinks) {
+      setValidationMessage("Can't be empty");
+      setUrlError(null);
+      return;
+    }
+
+    if (invalidUrls) {
+      setUrlError("Please check the URL");
+      return;
+    }
+
     // Save selected options to Firebase
     const db = getFirestore(app);
-    const profileRef = collection(db, "profiles"); // Use your collection name
+    const profileRef = collection(db, "profiles");
     await addDoc(profileRef, { selectedOptions });
 
     // Navigate to profile page
-    router.push("/profile"); // Adjust path to your profile page
+    router.push("/profile");
+  };
+
+  const isValidURL = (url: string) => {
+    try {
+      new URL(url);
+      return true;
+    } catch (_) {
+      return false;
+    }
   };
 
   const optionStyles: Record<
@@ -90,18 +137,27 @@ const AddPage: React.FC = () => {
           </p>
         </div>
 
-        <PageHeader onAddNewLink={handleAddNewLink} />
+        <PageHeader
+          onAddNewLink={handleAddNewLink}
+          borderColor={buttonBorderColor}
+        />
 
         <LinkList
           links={links}
           onSelect={handleSelect}
           onRemove={handleRemoveLink}
+          onInputChange={handleInputChange}
+          onInputFocus={handleInputFocus}
+          onInputBlur={handleInputBlur}
+          inputBorderColor={inputBorderColor}
+          validationMessage={validationMessage}
+          urlError={urlError}
         />
 
         <div className="flex justify-end mt-10 border-t-2 pt-4">
           <button
-            onClick={handleSave} // Add onClick handler
-            className="w-full md:w-[91px] md:h-[46px] p-3 rounded-lg  bg-[#633CFF] text-[#F3F2F2] flex items-center justify-center gap-2"
+            onClick={handleSave}
+            className="w-full md:w-[91px] md:h-[46px] p-3 rounded-lg bg-[#633CFF] text-[#F3F2F2] flex items-center justify-center gap-2"
           >
             <span>Save</span>
           </button>

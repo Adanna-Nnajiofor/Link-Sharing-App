@@ -2,50 +2,68 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { FaEnvelope, FaLock, FaUser } from "react-icons/fa";
+import { FaEnvelope, FaLock } from "react-icons/fa";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../config/firebaseConfig";
 
 const RegisterPage: React.FC = () => {
   const router = useRouter();
 
-  // State for handling errors
-  const [usernameError, setUsernameError] = useState("");
+  // State for form fields and error handling
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [confirmPasswordError, setConfirmPasswordError] = useState("");
 
   // Error handling function
   const validateForm = () => {
     let isValid = true;
 
-    const usernameInput = document.getElementById(
-      "username"
-    ) as HTMLInputElement;
-    const emailInput = document.getElementById("email") as HTMLInputElement;
-    const passwordInput = document.getElementById(
-      "password"
-    ) as HTMLInputElement;
-
-    if (!usernameInput.value) {
-      setUsernameError("Username can't be empty");
-      isValid = false;
-    } else {
-      setUsernameError("");
-    }
-
-    if (!emailInput.value) {
-      setEmailError("Can't be empty");
+    if (!email) {
+      setEmailError("Email address can't be empty");
       isValid = false;
     } else {
       setEmailError("");
     }
 
-    if (!passwordInput.value) {
-      setPasswordError("Please check again");
+    if (!password) {
+      setPasswordError("Password can't be empty");
       isValid = false;
     } else {
       setPasswordError("");
     }
 
+    if (password !== confirmPassword) {
+      setConfirmPasswordError("Passwords do not match");
+      isValid = false;
+    } else {
+      setConfirmPasswordError("");
+    }
+
     return isValid;
+  };
+
+  // Handle form submission
+  const handleRegister = async () => {
+    if (validateForm()) {
+      try {
+        const userCredential = await createUserWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+        console.log("User registered:", userCredential.user);
+        // Redirect to an empty page
+        router.push("/empty");
+      } catch (error: any) {
+        console.error("Error registering user:", error.message);
+        if (error.code === "auth/email-already-in-use") {
+          setEmailError("Email already in use");
+        }
+      }
+    }
   };
 
   return (
@@ -66,56 +84,13 @@ const RegisterPage: React.FC = () => {
         <div className="w-full bg-white md:border-2 md:rounded-xl md:shadow-md md:p-6 gap-[40px]">
           <div className="mb-4 flex flex-col gap-2">
             <h1 className="text-[#333333] text-2xl font-bold leading-8">
-              Register
+              Create account
             </h1>
             <p className="text-[#737373] text-base leading-6">
-              Add your details below to create an account
+              Let’s get you started sharing your links!
             </p>
           </div>
           <div className="flex flex-col gap-6 mt-8">
-            <div className="flex flex-col gap-2 relative">
-              <label
-                htmlFor="username"
-                className={`text-base ${
-                  usernameError ? "text-[#FF3939]" : "text-[#737373]"
-                }`}
-              >
-                Username
-              </label>
-              <div
-                className={`relative flex items-center border rounded-lg p-2 ${
-                  usernameError
-                    ? "border-[#FF3939]"
-                    : "border-[#D9D9D9] focus-within:border-[#633CFF]"
-                }`}
-              >
-                <FaUser
-                  className={`text-[#737373] ${
-                    usernameError ? "text-[#FF3939]" : ""
-                  }`}
-                />
-                <input
-                  type="text"
-                  id="username"
-                  placeholder="Enter your username"
-                  className={`flex-1 p-2 text-base text-[#737373] opacity-50 focus:outline-none ${
-                    usernameError ? "border-[#FF3939]" : ""
-                  }`}
-                />
-                {usernameError && (
-                  <p
-                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-[#FF3939] text-[12px] font-normal"
-                    style={{
-                      fontFamily: "Instrument Sans",
-                      lineHeight: "18px",
-                      textAlign: "right",
-                    }}
-                  >
-                    {usernameError}
-                  </p>
-                )}
-              </div>
-            </div>
             <div className="flex flex-col gap-2 relative">
               <label
                 htmlFor="email"
@@ -140,10 +115,12 @@ const RegisterPage: React.FC = () => {
                 <input
                   type="email"
                   id="email"
-                  placeholder="e.g. alex@email.com"
+                  placeholder="ben@example.com"
                   className={`flex-1 p-2 text-base text-[#737373] opacity-50 focus:outline-none ${
                     emailError ? "border-[#FF3939]" : ""
                   }`}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
                 {emailError && (
                   <p
@@ -166,7 +143,7 @@ const RegisterPage: React.FC = () => {
                   passwordError ? "text-[#FF3939]" : "text-[#737373]"
                 }`}
               >
-                Password
+                Create password
               </label>
               <div
                 className={`relative flex items-center border rounded-lg p-2 ${
@@ -183,10 +160,12 @@ const RegisterPage: React.FC = () => {
                 <input
                   type="password"
                   id="password"
-                  placeholder="Enter your password"
+                  placeholder="**********"
                   className={`flex-1 p-2 text-base text-[#737373] opacity-50 focus:outline-none ${
                     passwordError ? "border-[#FF3939]" : ""
                   }`}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                 />
                 {passwordError && (
                   <p
@@ -202,6 +181,51 @@ const RegisterPage: React.FC = () => {
                 )}
               </div>
             </div>
+            <div className="flex flex-col gap-2 relative">
+              <label
+                htmlFor="confirmPassword"
+                className={`text-base ${
+                  confirmPasswordError ? "text-[#FF3939]" : "text-[#737373]"
+                }`}
+              >
+                Confirm password
+              </label>
+              <div
+                className={`relative flex items-center border rounded-lg p-2 ${
+                  confirmPasswordError
+                    ? "border-[#FF3939]"
+                    : "border-[#D9D9D9] focus-within:border-[#633CFF]"
+                }`}
+              >
+                <FaLock
+                  className={`text-[#737373] ${
+                    confirmPasswordError ? "text-[#FF3939]" : ""
+                  }`}
+                />
+                <input
+                  type="password"
+                  id="confirmPassword"
+                  placeholder="**********"
+                  className={`flex-1 p-2 text-base text-[#737373] opacity-50 focus:outline-none ${
+                    confirmPasswordError ? "border-[#FF3939]" : ""
+                  }`}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                />
+                {confirmPasswordError && (
+                  <p
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-[#FF3939] text-[12px] font-normal"
+                    style={{
+                      fontFamily: "Instrument Sans",
+                      lineHeight: "18px",
+                      textAlign: "right",
+                    }}
+                  >
+                    {confirmPasswordError}
+                  </p>
+                )}
+              </div>
+            </div>
             <button
               className="bg-[#633CFF] text-white rounded-lg py-3 px-6 transition-colors duration-300 hover:bg-[#BEADFF] hover:shadow-lg"
               onMouseDown={(e) =>
@@ -213,9 +237,9 @@ const RegisterPage: React.FC = () => {
               style={{
                 boxShadow: "0px 0px 32px 0px rgba(99, 60, 255, 0.25)",
               }}
-              onClick={validateForm}
+              onClick={handleRegister}
             >
-              Register
+              Create new account
             </button>
             <div className="text-center flex flex-col items-center justify-center md:flex-row">
               <p className="text-base text-[#737373]">

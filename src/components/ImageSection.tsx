@@ -12,7 +12,7 @@ const ImageSection: React.FC<ImageSectionProps> = ({
   optionStyles,
 }) => {
   return (
-    <div className="w-full empty-page-left hidden lg:w-[560px] lg:h-[834px] p-6 gap-2 rounded-xl lg:flex items-center justify-center bg-white relative">
+    <div className="w-full h-auto empty-page-left hidden lg:w-[560px] lg:h-[834px] p-6 gap-2 rounded-xl lg:flex items-center justify-center bg-white relative">
       <img
         src="/Rectangle 15.png"
         alt="Example"

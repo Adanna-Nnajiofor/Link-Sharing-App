@@ -168,7 +168,7 @@ const ProfilePage: React.FC = () => {
           </div>
 
           <div
-            className="w-full h-auto page-right-started-1 gap-2 p-4 md:w-[193px] md:h-[193px] rounded-lg bg-[#EFEBFF] text-[#633CFF] flex flex-col items-center justify-center cursor-pointer"
+            className="w-auto  page-right-started-1 gap-2 p-4 md:w-[193px] md:h-[193px] rounded-lg bg-[#EFEBFF] text-[#633CFF] flex flex-col items-center justify-center cursor-pointer relative"
             onClick={() => document.getElementById("imageUpload")?.click()}
           >
             <CiImageOn size={25} />
@@ -183,10 +183,18 @@ const ProfilePage: React.FC = () => {
               onChange={handleImageChange}
               className="hidden"
             />
+            {imagePreview && (
+              <div
+                className="absolute inset-0 w-full h-full bg-cover bg-center opacity-10 z-0"
+                style={{
+                  backgroundImage: `url(${imagePreview})`,
+                }}
+              ></div>
+            )}
           </div>
           <div className="w-auto flex items-center justify-center">
             <p className="text-[12px] leading-[18px] text-[#737373]">
-              Image must be below 1024x1024px. Use PNG or JPG format.
+              Image must be below 1024x1024px. <br></br>Use PNG or JPG format.
             </p>
           </div>
         </div>
@@ -216,13 +224,13 @@ const ProfilePage: React.FC = () => {
               } w-full md:w-[450px] rounded-lg gap-[12px]`}
             />
             {firstNameError && (
-              <p className="absolute text-[#FF3939] text-xs">
+              <p className="absolute text-[#FF3939] text-xs right-3 top-3/4 md:top-1/2 transform -translate-y-1/2">
                 {firstNameError}
               </p>
             )}
           </div>
 
-          <div className="w-full justify-between flex flex-col md:flex-row gap-[16px] relative mt-[16px]">
+          <div className="w-full justify-between flex flex-col md:flex-row gap-[16px] relative">
             <label
               htmlFor="lastname"
               className={`text-left ${
@@ -246,23 +254,25 @@ const ProfilePage: React.FC = () => {
               } w-full md:w-[450px] rounded-lg gap-[12px]`}
             />
             {lastNameError && (
-              <p className="absolute text-[#FF3939] text-xs">{lastNameError}</p>
+              <p className="absolute text-[#FF3939] text-xs right-3 top-3/4 md:top-1/2 transform -translate-y-1/2">
+                {lastNameError}
+              </p>
             )}
           </div>
 
-          <div className="w-full justify-between flex flex-col md:flex-row gap-[16px] relative mt-[16px]">
+          <div className="w-full justify-between flex flex-col md:flex-row gap-[16px] relative">
             <label
               htmlFor="email"
               className={`text-left ${
                 emailError ? "text-[#FF3939]" : "text-[#737373]"
               }`}
             >
-              Email Address
+              Email
             </label>
             <input
               type="email"
               id="email"
-              placeholder="e.g. example@domain.com"
+              placeholder="e.g. john.doe@gmail.com"
               value={profile.email}
               onChange={(e) =>
                 setProfile({ ...profile, email: e.target.value })
@@ -274,18 +284,20 @@ const ProfilePage: React.FC = () => {
               } w-full md:w-[450px] rounded-lg gap-[12px]`}
             />
             {emailError && (
-              <p className="absolute text-[#FF3939] text-xs">{emailError}</p>
+              <p className="absolute text-[#FF3939] text-xs right-3 top-3/4 md:top-1/2 transform -translate-y-1/2">
+                {emailError}
+              </p>
             )}
           </div>
+        </div>
 
-          <div className="flex justify-end mt-10 border-t-2 pt-4">
-            <button
-              onClick={handleUpdateProfile} // Add onClick handler
-              className="w-full md:w-[91px] md:h-[46px] p-3 rounded-lg  bg-[#633CFF] text-[#F3F2F2] flex items-center justify-center gap-2"
-            >
-              <span>Save</span>
-            </button>
-          </div>
+        <div className="w-full flex items-center justify-end">
+          <button
+            onClick={handleUpdateProfile}
+            className="w-full md:w-[91px] px-6 py-3 bg-[#633CFF] text-white rounded-lg hover:bg-[#4d2bcc]"
+          >
+            Save
+          </button>
         </div>
       </div>
     </div>

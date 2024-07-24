@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import {
   FaGithub,
   FaTwitter,
@@ -11,7 +12,6 @@ import {
   FaFreeCodeCamp,
   FaGitlab,
   FaStackOverflow,
-  FaLink,
 } from "react-icons/fa";
 import { FaHashnode } from "react-icons/fa6";
 import { SiFrontendmentor } from "react-icons/si";
@@ -44,38 +44,57 @@ const options: Option[] = [
     label: "Stack Overflow",
     icon: <FaStackOverflow />,
   },
-  { value: "link", label: "Link", icon: <FaLink /> },
 ];
 
 interface CustomDropdownProps {
   onSelect: (option: Option | null) => void;
+  selectedOption: Option | null;
 }
 
-const CustomDropdown: React.FC<CustomDropdownProps> = ({ onSelect }) => {
-  const [selectedOption, setSelectedOption] = useState<Option | null>(null);
+const CustomDropdown: React.FC<CustomDropdownProps> = ({
+  onSelect,
+  selectedOption,
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selected = options.find((option) => option.value === e.target.value);
-    setSelectedOption(selected || null);
+  const handleChange = (value: string) => {
+    const selected = options.find((option) => option.value === value);
     onSelect(selected || null);
+    setIsOpen(false);
   };
 
   return (
     <div className="relative">
-      <select
-        value={selectedOption?.value || ""}
-        onChange={handleChange}
-        className="w-full p-3 pl-10 rounded-lg border border-[#D9D9D9] bg-white text-[16px] font-[400] leading-[24px] text-[#333333] appearance-none"
+      <div
+        className="w-full p-3 pl-10 rounded-lg border border-[#D9D9D9] bg-white text-[16px] font-[400] leading-[24px] text-[#333333] cursor-pointer flex items-center justify-between"
+        onClick={() => setIsOpen(!isOpen)}
       >
-        {options.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
-      <div className="absolute top-1/2 left-3 transform -translate-y-1/2 pointer-events-none text-[#333333]">
-        {selectedOption?.icon}
+        <div className="flex items-center">
+          <span className="mr-2">{selectedOption?.icon}</span>
+          {selectedOption?.label || "Select an option"}
+        </div>
+        <div className="text-[#333333]">
+          {isOpen ? <FaChevronUp /> : <FaChevronDown />}
+        </div>
       </div>
+      {isOpen && (
+        <div className="absolute w-full mt-2 border border-[#D9D9D9] bg-white rounded-lg shadow-lg z-10">
+          {options.map((option) => (
+            <div
+              key={option.value}
+              className={`flex items-center p-3 text-[16px] font-[400] leading-[24px] ${
+                selectedOption?.value === option.value
+                  ? "bg-white text-purple-500"
+                  : "bg-white text-[#333333]"
+              } border-b border-[#D9D9D9] cursor-pointer hover:text-purple-500`}
+              onClick={() => handleChange(option.value)}
+            >
+              <span className="mr-2">{option.icon}</span>
+              {option.label}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

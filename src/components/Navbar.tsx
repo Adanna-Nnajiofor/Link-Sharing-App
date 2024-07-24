@@ -1,11 +1,11 @@
-"use client"; // Ensure this is a Client Component
+"use client";
 
 import Link from "next/link";
-import { FaLink, FaUser, FaEye } from "react-icons/fa"; // Import eye icon
-import { usePathname } from "next/navigation"; // Updated import
-import { useState } from "react"; // Import useState for managing button state
-import { useAuthState } from "react-firebase-hooks/auth"; // Import useAuthState
-import { auth } from "../app/config/firebaseConfig"; // Import auth from your firebase config
+import { FaLink, FaUser, FaEye } from "react-icons/fa";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "../app/config/firebaseConfig";
 
 const Navbar: React.FC = () => {
   const pathname = usePathname(); // Updated hook.
@@ -33,7 +33,7 @@ const Navbar: React.FC = () => {
             className="w-[108px] h-[21px] ml-[20px] hidden md:flex"
           />
         </div>
-        {/* Display icons on mobile screens */}
+        {/* Display icons on larger screens */}
         <div className="navbar-main-links gap-4 items-center justify-center hidden md:flex">
           <Link
             href="/links"
@@ -71,49 +71,66 @@ const Navbar: React.FC = () => {
           </Link>
         </div>
 
-        {/* Display only icons and mobile version of the button */}
-        <div className="navbar-main-links flex gap-4 items-center md:hidden">
-          <Link
-            href="/links"
-            className={`flex items-center gap-2 p-2 rounded-lg ${
-              pathname === "/links"
-                ? "bg-[#EFEBFF] text-[#633CFF]"
-                : "bg-white text-black"
-            }`}
-          >
-            <FaLink />
-          </Link>
-          <Link
-            href="/profile"
-            className={`flex items-center gap-2 p-2 rounded-lg ${
-              pathname === "/profile"
-                ? "bg-[#EFEBFF] text-[#633CFF]"
-                : "bg-white text-[#737373]"
-            }`}
-          >
-            <FaUser />
-          </Link>
-        </div>
-        <div>
-          {user ? (
-            <div className="flex gap-4 items-center">
-              <button
-                onClick={() => auth.signOut()} // Sign out button
-                className="hidden md:flex items-center justify-center gap-2 p-3 rounded-lg border border-[#633CFF] bg-white text-[#633CFF] hover:bg-[#F4F4F4]"
-              >
-                Logout
-              </button>
+        {/* Display only icons on mobile screens */}
+        <div className="navbar-main-links flex items-center justify-between gap-10 md:hidden">
+          <div className="flex flex-1 justify-center items-center gap-2">
+            <Link
+              href="/links"
+              className={`flex items-center gap-2 p-2 rounded-lg ${
+                pathname === "/links"
+                  ? "bg-[#EFEBFF] text-[#633CFF]"
+                  : "bg-white text-black"
+              }`}
+            >
+              <FaLink />
+            </Link>
+            <Link
+              href="/profile"
+              className={`flex items-center gap-2 p-2 rounded-lg ${
+                pathname === "/profile"
+                  ? "bg-[#EFEBFF] text-[#633CFF]"
+                  : "bg-white text-[#737373]"
+              }`}
+            >
+              <FaUser />
+            </Link>
+          </div>
+          <div className="flex-shrink-0 flex items-end justify-end">
+            {user ? (
               <Link
                 href="/profile-preview"
-                className="flex items-center justify-center p-2 rounded-lg border border-[#633CFF] md:hidden"
+                className="flex items-center justify-center p-2 rounded-lg border border-[#633CFF]"
               >
                 <FaEye /> {/* Eye icon for mobile screens */}
               </Link>
-            </div>
+            ) : (
+              <Link
+                href="/profile-preview"
+                className={`flex items-center justify-center p-2 rounded-lg border border-[#633CFF] ${
+                  isPreviewActive
+                    ? "bg-[#633CFF] text-white"
+                    : "bg-white text-[#633CFF]"
+                }`}
+              >
+                <FaEye /> {/* Eye icon for mobile screens */}
+              </Link>
+            )}
+          </div>
+        </div>
+
+        {/* Display logout button and preview button for larger screens */}
+        <div className="hidden md:flex gap-4 items-center">
+          {user ? (
+            <button
+              onClick={() => auth.signOut()} // Sign out button
+              className="items-center justify-center gap-2 p-3 rounded-lg border border-[#633CFF] bg-white text-[#633CFF] hover:bg-[#F4F4F4]"
+            >
+              Logout
+            </button>
           ) : (
             <Link
               href="/profile-preview"
-              className={`preview-button hidden md:flex items-center justify-center gap-2 p-3 rounded-lg border border-[#633CFF] ${
+              className={`preview-button items-center justify-center gap-2 p-3 rounded-lg border border-[#633CFF] ${
                 isPreviewActive
                   ? "bg-[#633CFF] text-white"
                   : "bg-white text-[#633CFF]"

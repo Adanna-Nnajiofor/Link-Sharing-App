@@ -45,9 +45,10 @@ const LoginPage: React.FC = () => {
     if (validateForm()) {
       try {
         await signInWithEmailAndPassword(auth, email, password);
-        router.push("/");
+        router.push("/empty");
       } catch (error) {
         console.error("Login error", error);
+        // Optionally set error messages based on specific error codes
       }
     }
   };
@@ -57,9 +58,10 @@ const LoginPage: React.FC = () => {
     if (validateForm()) {
       try {
         await createUserWithEmailAndPassword(auth, email, password);
-        router.push("/");
+        router.push("/empty");
       } catch (error) {
         console.error("Registration error", error);
+        // Optionally set error messages based on specific error codes
       }
     }
   };
@@ -202,7 +204,14 @@ const LoginPage: React.FC = () => {
                   : "Don’t have an account? "}
                 <span
                   className="text-[#633CFF] cursor-pointer"
-                  onClick={() => setIsRegistering(!isRegistering)}
+                  onClick={() => {
+                    if (isRegistering) {
+                      router.push("/login");
+                    } else {
+                      router.push("/register");
+                    }
+                    setIsRegistering(!isRegistering);
+                  }}
                 >
                   {isRegistering ? "Login" : "Create account"}
                 </span>
