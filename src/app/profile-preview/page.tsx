@@ -1,16 +1,27 @@
-// src/app/profile-preview/page.tsx
+"use client";
 import React from "react";
 import { FaGithub, FaArrowRight } from "react-icons/fa"; // Import react-icons for GitHub and arrow icons
+import { useRouter } from "next/navigation"; // Import useRouter for navigation
 
 const ProfilePreview: React.FC = () => {
+  const router = useRouter(); // Initialize useRouter
+
+  // Function to handle the button click and navigate to the Add page
+  const handleBackToEditorClick = () => {
+    router.push("/add"); // Navigate to the Add page
+  };
+
   return (
-    <div className="preview w-full h-screen relative bg-gray-100  flex flex-col items-center mb-20">
+    <div className="preview w-full h-screen relative bg-gray-100 flex flex-col items-center mb-20">
       {/* Preview Top */}
       <div className="preview-top w-full h-[357px] gap-0 md:rounded-b-[32px] md:bg-[#633CFF]">
         <div className="preview-top-nav w-auto h-auto md:h-[78px] p-[16px] gap-[8px] m-4 md:rounded-[12px] md:bg-[#FFFFFF] flex items-center">
           <div className="preview-nav-main flex justify-between flex-row w-full">
             <div className="preview-nav-main-1">
-              <button className="w-auto md:w-[159px] h-auto md:h-[46px] px-[27px] py-[11px] gap-[8px] rounded-[8px] border border-[#633CFF] text-[#633CFF]">
+              <button
+                className="w-auto md:w-[159px] h-auto md:h-[46px] px-[27px] py-[11px] gap-[8px] rounded-[8px] border border-[#633CFF] text-[#633CFF]"
+                onClick={handleBackToEditorClick} // Add click handler
+              >
                 Back to Editor
               </button>
             </div>

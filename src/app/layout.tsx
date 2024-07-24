@@ -10,7 +10,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const pathname = usePathname();
 
   // Determine if Navbar should be hidden
-  const showNavbar = !["/login", "/register", "/profile-preview"].includes(
+  const showNavbar = !["/", "/login", "/register", "/profile-preview"].includes(
     pathname
   );
 

@@ -46,9 +46,15 @@ const LoginPage: React.FC = () => {
       try {
         await signInWithEmailAndPassword(auth, email, password);
         router.push("/empty");
-      } catch (error) {
+      } catch (error: any) {
         console.error("Login error", error);
-        // Optionally set error messages based on specific error codes
+        if (error.code === "auth/user-not-found") {
+          setEmailError("No user found with this email");
+        } else if (error.code === "auth/wrong-password") {
+          setPasswordError("Incorrect password");
+        } else {
+          setEmailError("Invalid credentials");
+        }
       }
     }
   };
@@ -59,9 +65,15 @@ const LoginPage: React.FC = () => {
       try {
         await createUserWithEmailAndPassword(auth, email, password);
         router.push("/empty");
-      } catch (error) {
+      } catch (error: any) {
         console.error("Registration error", error);
-        // Optionally set error messages based on specific error codes
+        if (error.code === "auth/email-already-in-use") {
+          setEmailError("Email already in use");
+        } else if (error.code === "auth/weak-password") {
+          setPasswordError("Password is too weak");
+        } else {
+          setEmailError("Failed to create account");
+        }
       }
     }
   };
@@ -190,9 +202,7 @@ const LoginPage: React.FC = () => {
               onMouseUp={(e) =>
                 (e.currentTarget.style.backgroundColor = "#633CFF")
               }
-              style={{
-                boxShadow: "0px 0px 32px 0px rgba(99, 60, 255, 0.25)",
-              }}
+              style={{ boxShadow: "0px 0px 32px 0px rgba(99, 60, 255, 0.25)" }}
               onClick={isRegistering ? handleRegister : handleLogin}
             >
               {isRegistering ? "Register" : "Login"}
@@ -213,7 +223,7 @@ const LoginPage: React.FC = () => {
                     setIsRegistering(!isRegistering);
                   }}
                 >
-                  {isRegistering ? "Login" : "Create account"}
+                  {isRegistering ? "Login" : "Register"}
                 </span>
               </p>
             </div>

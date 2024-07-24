@@ -68,6 +68,7 @@ const AddPage: React.FC = () => {
   };
 
   const handleSave = async () => {
+    // Validate and format the data to be saved
     const emptyLinks = links.some((link) => !link.url);
     const invalidUrls = links.some((link) => !isValidURL(link.url));
 
@@ -82,10 +83,16 @@ const AddPage: React.FC = () => {
       return;
     }
 
-    // Save selected options to Firebase
+    // Format selectedOptions if necessary
+    const formattedOptions = selectedOptions.map((option) => ({
+      ...option,
+      // Ensure no unexpected values are present
+    }));
+
+    // Save data to Firestore
     const db = getFirestore(app);
     const profileRef = collection(db, "profiles");
-    await addDoc(profileRef, { selectedOptions });
+    await addDoc(profileRef, { selectedOptions: formattedOptions });
 
     // Navigate to profile page
     router.push("/profile");
