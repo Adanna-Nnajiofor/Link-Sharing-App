@@ -4,10 +4,13 @@ import Link from "next/link";
 import { FaLink, FaUser, FaEye } from "react-icons/fa"; // Import eye icon
 import { usePathname } from "next/navigation"; // Updated import
 import { useState } from "react"; // Import useState for managing button state
+import { useAuthState } from "react-firebase-hooks/auth"; // Import useAuthState
+import { auth } from "../app/config/firebaseConfig"; // Import auth from your firebase config
 
 const Navbar: React.FC = () => {
-  const pathname = usePathname(); // Updated hook
+  const pathname = usePathname(); // Updated hook.
   const [isPreviewActive, setIsPreviewActive] = useState(false); // State to manage button active state
+  const [user] = useAuthState(auth); // Check if the user is authenticated
 
   // Function to toggle button active state (e.g., could be based on certain conditions or user interactions)
   const togglePreviewActive = () => {
@@ -34,7 +37,7 @@ const Navbar: React.FC = () => {
         <div className="navbar-main-links gap-4 items-center justify-center hidden md:flex">
           <Link
             href="/links"
-            className={`navbar-link flex items-center justify-center  gap-2 p-3 rounded-lg ${
+            className={`navbar-link flex items-center justify-center gap-2 p-3 rounded-lg ${
               pathname === "/links"
                 ? "bg-[#EFEBFF] text-[#633CFF]"
                 : "bg-white text-black"
@@ -92,26 +95,33 @@ const Navbar: React.FC = () => {
           </Link>
         </div>
         <div>
-          <button
-            onClick={togglePreviewActive} // Toggle active state on button click
-            className={`preview-button hidden md:flex items-center justify-center gap-2 p-3 rounded-lg border border-[#633CFF] ${
-              isPreviewActive
-                ? "bg-[#633CFF] text-white"
-                : "bg-white text-[#633CFF]"
-            } hover:bg-[#F4F4F4]`}
-          >
-            Preview
-          </button>
-          <button
-            onClick={togglePreviewActive} // Toggle active state on button click
-            className={`flex items-center justify-center p-2 rounded-lg border border-[#633CFF] md:hidden ${
-              isPreviewActive
-                ? "bg-[#633CFF] text-white"
-                : "bg-white text-[#633CFF]"
-            } hover:bg-[#F4F4F4]`}
-          >
-            <FaEye /> {/* Eye icon for mobile screens */}
-          </button>
+          {user ? (
+            <div className="flex gap-4 items-center">
+              <button
+                onClick={() => auth.signOut()} // Sign out button
+                className="hidden md:flex items-center justify-center gap-2 p-3 rounded-lg border border-[#633CFF] bg-white text-[#633CFF] hover:bg-[#F4F4F4]"
+              >
+                Logout
+              </button>
+              <Link
+                href="/profile-preview"
+                className="flex items-center justify-center p-2 rounded-lg border border-[#633CFF] md:hidden"
+              >
+                <FaEye /> {/* Eye icon for mobile screens */}
+              </Link>
+            </div>
+          ) : (
+            <Link
+              href="/profile-preview"
+              className={`preview-button hidden md:flex items-center justify-center gap-2 p-3 rounded-lg border border-[#633CFF] ${
+                isPreviewActive
+                  ? "bg-[#633CFF] text-white"
+                  : "bg-white text-[#633CFF]"
+              } hover:bg-[#F4F4F4]`}
+            >
+              Preview
+            </Link>
+          )}
         </div>
       </div>
     </div>

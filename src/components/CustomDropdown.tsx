@@ -14,6 +14,7 @@ import {
   FaLink,
 } from "react-icons/fa";
 import { FaHashnode } from "react-icons/fa6";
+import { SiFrontendmentor } from "react-icons/si";
 
 export interface Option {
   value: string;
@@ -23,7 +24,11 @@ export interface Option {
 
 const options: Option[] = [
   { value: "github", label: "GitHub", icon: <FaGithub /> },
-  { value: "frontend-mentor", label: "Frontend Mentor", icon: <FaGithub /> },
+  {
+    value: "frontend-mentor",
+    label: "Frontend Mentor",
+    icon: <SiFrontendmentor />,
+  },
   { value: "twitter", label: "Twitter", icon: <FaTwitter /> },
   { value: "linkedin", label: "LinkedIn", icon: <FaLinkedin /> },
   { value: "youtube", label: "YouTube", icon: <FaYoutube /> },
@@ -39,6 +44,7 @@ const options: Option[] = [
     label: "Stack Overflow",
     icon: <FaStackOverflow />,
   },
+  { value: "link", label: "Link", icon: <FaLink /> },
 ];
 
 interface CustomDropdownProps {

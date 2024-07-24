@@ -8,17 +8,37 @@ const EmptyPage: React.FC = () => {
 
   const handleAddNewLink = () => {
     // Navigate to the AddPage
-    router.push("/links/add");
+    router.push("/add");
   };
 
   return (
     <div className="empty-page bg-gray-50 flex p-6 gap-6 flex-col md:flex-row">
-      <div className="w-full empty-page-left hidden lg:w-[560px] lg:h-[834px] p-6 gap-2 rounded-xl lg:flex items-center justify-center bg-white ">
+      <div className="w-full empty-page-left hidden lg:w-[560px] lg:h-[834px] p-6 gap-2 rounded-xl lg:flex items-center justify-center bg-white relative">
         <img
-          src="/preview-section.png"
+          src="/Rectangle 15.png"
           alt="Example"
-          className="w-full lg:w-[307px] lg:h-[631px] border border-white flex "
+          className="w-full lg:w-[307px] lg:h-[631px] border border-white"
         />
+        <img
+          src="/Subtract.png"
+          alt="Example"
+          className="w-[285px] h-[611px] border border-white absolute inset-0 m-auto"
+        />
+        <div className="image-main w-[237px] h-auto flex flex-col gap-14 absolute top-[165px] left-[161px] ">
+          <div className="image-main-head flex flex-col gap-6  items-center justify-center">
+            <div className="image-main-head-1 w-[96px] h-[96px] bg-[#EEEEEE] rounded-full"></div>
+            <div className="image-main-head-2 w-[160px] h-[16px] bg-[#EEEEEE] rounded-[104px]"></div>
+            <div className="image-main-head-3 w-[72px] h-[8px] bg-[#EEEEEE] rounded-[104px]"></div>
+          </div>
+          <div className="image-main-bottom flex flex-col gap-5">
+            {[...Array(5)].map((_, index) => (
+              <div
+                key={index}
+                className="image-main-bottom-1 w-[237px] h-[44px] bg-[#EEEEEE] rounded-[8px]"
+              ></div>
+            ))}
+          </div>
+        </div>
       </div>
 
       <div className="w-full empty-page-right flex-1 h-auto gap-6 p-10 rounded-xl bg-white flex flex-col">
@@ -43,7 +63,7 @@ const EmptyPage: React.FC = () => {
         </div>
 
         <div className="w-full page-right-started p-8 gap-3 rounded-lg bg-[#FAFAFA] flex flex-col">
-          <div className="w-fll lg:w-[249.53px] lg:h-[160px] mx-auto">
+          <div className="w-full lg:w-[249.53px] lg:h-[160px] mx-auto">
             <img src="/Group 273.png" alt="Example" />
           </div>
 

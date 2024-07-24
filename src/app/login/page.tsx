@@ -3,31 +3,34 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { FaEnvelope, FaLock } from "react-icons/fa";
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+} from "firebase/auth";
+import { auth } from "../config/firebaseConfig";
 
 const LoginPage: React.FC = () => {
   const router = useRouter();
 
-  // State for handling errors
+  // State for handling form input and errors
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [isRegistering, setIsRegistering] = useState(false);
 
-  // Error handling function
+  // Validation function
   const validateForm = () => {
     let isValid = true;
 
-    const emailInput = document.getElementById("email") as HTMLInputElement;
-    const passwordInput = document.getElementById(
-      "password"
-    ) as HTMLInputElement;
-
-    if (!emailInput.value) {
+    if (!email) {
       setEmailError("Can't be empty");
       isValid = false;
     } else {
       setEmailError("");
     }
 
-    if (!passwordInput.value) {
+    if (!password) {
       setPasswordError("Please check again");
       isValid = false;
     } else {
@@ -35,6 +38,30 @@ const LoginPage: React.FC = () => {
     }
 
     return isValid;
+  };
+
+  // Handle login
+  const handleLogin = async () => {
+    if (validateForm()) {
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        router.push("/");
+      } catch (error) {
+        console.error("Login error", error);
+      }
+    }
+  };
+
+  // Handle registration
+  const handleRegister = async () => {
+    if (validateForm()) {
+      try {
+        await createUserWithEmailAndPassword(auth, email, password);
+        router.push("/");
+      } catch (error) {
+        console.error("Registration error", error);
+      }
+    }
   };
 
   return (
@@ -55,10 +82,11 @@ const LoginPage: React.FC = () => {
         <div className="w-full bg-white md:border-2 md:rounded-xl md:shadow-md md:p-6 gap-[40px]">
           <div className="mb-4 flex flex-col gap-2">
             <h1 className="text-[#333333] text-2xl font-bold leading-8">
-              Login
+              {isRegistering ? "Register" : "Login"}
             </h1>
             <p className="text-[#737373] text-base leading-6">
-              Add your details below to get back into the app
+              Add your details below to{" "}
+              {isRegistering ? "create an account" : "get back into the app"}
             </p>
           </div>
           <div className="flex flex-col gap-6 mt-8">
@@ -87,6 +115,8 @@ const LoginPage: React.FC = () => {
                   type="email"
                   id="email"
                   placeholder="e.g. alex@email.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className={`flex-1 p-2 text-base text-[#737373] opacity-50 focus:outline-none ${
                     emailError ? "border-[#FF3939]" : ""
                   }`}
@@ -130,6 +160,8 @@ const LoginPage: React.FC = () => {
                   type="password"
                   id="password"
                   placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   className={`flex-1 p-2 text-base text-[#737373] opacity-50 focus:outline-none ${
                     passwordError ? "border-[#FF3939]" : ""
                   }`}
@@ -159,18 +191,20 @@ const LoginPage: React.FC = () => {
               style={{
                 boxShadow: "0px 0px 32px 0px rgba(99, 60, 255, 0.25)",
               }}
-              onClick={validateForm}
+              onClick={isRegistering ? handleRegister : handleLogin}
             >
-              Login
+              {isRegistering ? "Register" : "Login"}
             </button>
             <div className="text-center flex flex-col items-center justify-center md:flex-row">
               <p className="text-base text-[#737373]">
-                Don’t have an account?{" "}
+                {isRegistering
+                  ? "Already have an account? "
+                  : "Don’t have an account? "}
                 <span
                   className="text-[#633CFF] cursor-pointer"
-                  onClick={() => router.push("/register")}
+                  onClick={() => setIsRegistering(!isRegistering)}
                 >
-                  Create account
+                  {isRegistering ? "Login" : "Create account"}
                 </span>
               </p>
             </div>

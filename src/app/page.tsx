@@ -1,3 +1,5 @@
+// src/app/page.tsx
+import React from "react";
 import Link from "next/link";
 
 export default function Home() {
@@ -14,8 +16,18 @@ export default function Home() {
         <Link href="/empty">
           <span className="text-blue-500 cursor-pointer">Go to Empty Page</span>
         </Link>
-        <Link href="/links/add">
+        <Link href="/add">
           <span className="text-blue-500 cursor-pointer">Go to Add Page</span>
+        </Link>
+        <Link href="/profile">
+          <span className="text-blue-500 cursor-pointer">
+            Go to Profile Page
+          </span>
+        </Link>
+        <Link href="/profile-preview">
+          <span className="text-blue-500 cursor-pointer">
+            Go to Profile Preview Page
+          </span>
         </Link>
       </div>
     </main>
