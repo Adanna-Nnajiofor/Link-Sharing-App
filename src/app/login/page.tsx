@@ -79,7 +79,7 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="flex w-full h-full md:justify-center md:items-center md:h-full">
+    <div className="flex w-full h-full items-center justify-center md:justify-center md:items-center md:h-full">
       <div className="w-full flex flex-col p-8 md:items-center md:w-[476px] md:h-[573px] md:p-10 gap-12 m-10">
         <div className="w-full flex md:justify-center items-center gap-2">
           <img
@@ -93,7 +93,7 @@ const LoginPage: React.FC = () => {
             className="w-[135px] h-[26.25px]"
           />
         </div>
-        <div className="w-full p-4 bg-white md:border-2 md:rounded-xl md:shadow-md md:p-6 gap-[40px]">
+        <div className="w-full   md:bg-white md:border-2 md:rounded-xl md:shadow-md md:p-6 gap-[40px]">
           <div className="mb-4 flex flex-col gap-2">
             <h1 className="text-[#333333] text-2xl font-bold leading-8">
               {isRegistering ? "Register" : "Login"}
