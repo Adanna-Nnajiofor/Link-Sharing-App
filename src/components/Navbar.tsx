@@ -6,19 +6,25 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../app/config/firebaseConfig";
+import DropdownMenu from "./NavDropdownMenu"; // Adjust the path as necessary
 
 const Navbar: React.FC = () => {
   const pathname = usePathname(); // Updated hook.
   const [isPreviewActive, setIsPreviewActive] = useState(false); // State to manage button active state
   const [user] = useAuthState(auth); // Check if the user is authenticated
+  const [isDropdownVisible, setDropdownVisible] = useState(false);
 
   // Function to toggle button active state (e.g., could be based on certain conditions or user interactions)
   const togglePreviewActive = () => {
     setIsPreviewActive(!isPreviewActive);
   };
 
+  const handleDropdownToggle = () => {
+    setDropdownVisible((prev) => !prev);
+  };
+
   return (
-    <div className="navbar flex p-6 gap-2">
+    <div className="navbar flex  gap-2">
       <div className="w-full navbar-main flex flex-row items-center justify-between p-4 rounded-lg border border-white bg-white text-black gap-2">
         {/* Display logo and text on larger screens */}
         <div className="navbar-main-image flex items-center">
@@ -35,13 +41,14 @@ const Navbar: React.FC = () => {
         </div>
         {/* Display icons on larger screens */}
         <div className="navbar-main-links gap-4 items-center justify-center hidden md:flex">
-          <Link
-            href="/links"
-            className={`navbar-link flex items-center justify-center gap-2 p-3 rounded-lg ${
+          <div
+            className={`relative flex items-center justify-center gap-2 p-3 rounded-lg cursor-pointer ${
               pathname === "/links"
                 ? "bg-[#EFEBFF] text-[#633CFF]"
                 : "bg-white text-black"
             }`}
+            onMouseEnter={handleDropdownToggle}
+            onMouseLeave={handleDropdownToggle}
           >
             <FaLink />
             <p
@@ -51,7 +58,11 @@ const Navbar: React.FC = () => {
             >
               Links
             </p>
-          </Link>
+            <DropdownMenu
+              isVisible={isDropdownVisible}
+              onClose={() => setDropdownVisible(false)}
+            />
+          </div>
           <Link
             href="/profile"
             className={`navbar-link flex items-center gap-2 p-3 rounded-lg ${

@@ -1,6 +1,8 @@
 import React, { useEffect } from "react";
 import { FaArrowRight } from "react-icons/fa";
 import { Option } from "@/components/CustomDropdown";
+import { collection, addDoc } from "firebase/firestore";
+import { db } from "../app/config/firebaseConfig"; // Adjust the path to your config file
 
 interface ImageSectionProps {
   selectedOptions: Option[];
@@ -11,7 +13,21 @@ const ImageSection: React.FC<ImageSectionProps> = ({
   selectedOptions,
   optionStyles,
 }) => {
+  const saveOptionsToFirestore = async (options: Option[]) => {
+    try {
+      await addDoc(collection(db, "selectedOptions"), {
+        options,
+        timestamp: new Date().toISOString(), // Optional: Add a timestamp
+      });
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
+  };
+
   useEffect(() => {
+    // Save selectedOptions to Firestore
+    saveOptionsToFirestore(selectedOptions);
+
     // Save selectedOptions to local storage
     localStorage.setItem("selectedOptions", JSON.stringify(selectedOptions));
   }, [selectedOptions]);

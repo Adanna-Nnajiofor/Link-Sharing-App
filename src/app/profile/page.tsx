@@ -3,14 +3,17 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { CiImageOn } from "react-icons/ci";
 import { FaPlus } from "react-icons/fa6";
-import { auth, db } from "../config/firebaseConfig";
+import { auth, db, storage } from "../config/firebaseConfig";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useAuthState } from "react-firebase-hooks/auth";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { FetchOptionsData } from "../../components/FetchOptions";
 
 interface Profile {
   firstName: string;
   lastName: string;
   email: string;
+  imageUrl?: string;
 }
 
 const ProfilePage: React.FC = () => {
@@ -32,6 +35,15 @@ const ProfilePage: React.FC = () => {
   );
   const [showOverlay, setShowOverlay] = useState(false);
 
+  const [options, setOptions] = useState<
+    {
+      backgroundColor: string;
+      color: string;
+      icon: JSX.Element;
+      label: string;
+    }[]
+  >([]);
+
   useEffect(() => {
     if (user) {
       const fetchProfile = async () => {
@@ -51,6 +63,14 @@ const ProfilePage: React.FC = () => {
       fetchProfile();
     }
   }, [user, router]);
+
+  useEffect(() => {
+    const fetchOptions = async () => {
+      const fetchedOptions = await FetchOptionsData();
+      setOptions(fetchedOptions);
+    };
+    fetchOptions();
+  }, []);
 
   const validateForm = () => {
     let isValid = true;
@@ -81,6 +101,12 @@ const ProfilePage: React.FC = () => {
 
   const handleUpdateProfile = async () => {
     if (validateForm() && user) {
+      if (image) {
+        const storageRef = ref(storage, `profiles/${user.uid}/${image.name}`);
+        await uploadBytes(storageRef, image);
+        const imageUrl = await getDownloadURL(storageRef);
+        profile.imageUrl = imageUrl;
+      }
       await setDoc(doc(db, "profiles", user.uid), profile);
     }
   };
@@ -140,11 +166,18 @@ const ProfilePage: React.FC = () => {
             </div>
           </div>
           <div className="image-main-bottom flex flex-col gap-5">
-            {[...Array(5)].map((_, index) => (
+            {options.map((option, index) => (
               <div
                 key={index}
                 className="image-main-bottom-1 w-[237px] h-[44px] bg-[#EEEEEE] rounded-[8px]"
-              ></div>
+                style={{
+                  backgroundColor: option.backgroundColor,
+                  color: option.color,
+                }}
+              >
+                <span>{option.icon}</span>
+                <span>{option.label}</span>
+              </div>
             ))}
           </div>
         </div>
@@ -215,7 +248,10 @@ const ProfilePage: React.FC = () => {
               placeholder="e.g. John"
               value={profile.firstName}
               onChange={(e) =>
-                setProfile({ ...profile, firstName: e.target.value })
+                setProfile((prev) => ({
+                  ...prev,
+                  firstName: e.target.value,
+                }))
               }
               className={`flex p-2 text-base text-[#737373] border ${
                 firstNameError
@@ -245,7 +281,10 @@ const ProfilePage: React.FC = () => {
               placeholder="e.g. Doe"
               value={profile.lastName}
               onChange={(e) =>
-                setProfile({ ...profile, lastName: e.target.value })
+                setProfile((prev) => ({
+                  ...prev,
+                  lastName: e.target.value,
+                }))
               }
               className={`flex p-2 text-base text-[#737373] border ${
                 lastNameError
@@ -275,7 +314,10 @@ const ProfilePage: React.FC = () => {
               placeholder="e.g. john.doe@gmail.com"
               value={profile.email}
               onChange={(e) =>
-                setProfile({ ...profile, email: e.target.value })
+                setProfile((prev) => ({
+                  ...prev,
+                  email: e.target.value,
+                }))
               }
               className={`flex p-2 text-base text-[#737373] border ${
                 emailError

@@ -43,7 +43,7 @@ const ProfilePreview: React.FC = () => {
               Profile Name
             </h2>
             <p className="text-[16px] font-normal leading-[24px] text-[#737373]">
-              Profile Description
+              Profile Email
             </p>
           </div>
           <div className="preview-links gap-[20px] flex flex-col">
